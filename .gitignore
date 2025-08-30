@@ -1,0 +1,93 @@
+# -------------------------------
+# Python
+# -------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.env.bak/
+*.env
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Logs & debug
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# IDE / editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# -------------------------------
+# Project-specific
+# -------------------------------
+
+# Data files
+data/raw/
+data/processed/
+data/temp/
+*.csv
+*.xlsx
+*.xls
+*.parquet
+
+# Model files
+models/
+*.h5
+*.hdf5
+*.pkl
+*.joblib
+*.sav
+
+# Results / outputs
+outputs/
+reports/
+*.png
+*.jpg
+*.jpeg
+*.pdf
+
+# Cache
+.cache/

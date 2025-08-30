@@ -1,0 +1,37 @@
+{
+  "timestamp": "20250824_141154",
+  "analysis_summary": {
+    "total_models_analyzed": 21,
+    "validation_methods": [
+      "Optimized Training (Time Series CV)",
+      "Walk-Forward Analysis"
+    ],
+    "model_types": [
+      "Individual",
+      "Ensemble",
+      "Traditional ML"
+    ]
+  },
+  "best_performers": {
+    "best_r2": {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "lasso",
+      "r2_score": 0.9889899434206976,
+      "rmse": 39.08317470306184,
+      "mae": 29.969009825434785,
+      "cv_score": -0.6049252969951768,
+      "cv_std": 1.1757713563596432
+    },
+    "best_rmse": {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "lasso",
+      "r2_score": 0.9889899434206976,
+      "rmse": 39.08317470306184,
+      "mae": 29.969009825434785,
+      "cv_score": -0.6049252969951768,
+      "cv_std": 1.1757713563596432
+    }
+  },
+  "performance_by_method": {

@@ -1,0 +1,298 @@
+{
+  "timestamp": "20250824_141714",
+  "analysis_summary": {
+    "total_models_analyzed": 21,
+    "validation_methods": [
+      "Optimized Training (Time Series CV)",
+      "Walk-Forward Analysis"
+    ],
+    "model_types": [
+      "Individual",
+      "Ensemble",
+      "Traditional ML"
+    ]
+  },
+  "best_performers": {
+    "best_r2": {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "lasso",
+      "r2_score": 0.9889899434206976,
+      "rmse": 39.08317470306184,
+      "mae": 29.969009825434785,
+      "cv_score": -0.6049252969951768,
+      "cv_std": 1.1757713563596432
+    },
+    "best_rmse": {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "lasso",
+      "r2_score": 0.9889899434206976,
+      "rmse": 39.08317470306184,
+      "mae": 29.969009825434785,
+      "cv_score": -0.6049252969951768,
+      "cv_std": 1.1757713563596432
+    }
+  },
+  "performance_by_method": [
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "r2_score_mean": -21.7487,
+      "r2_score_std": 71.8316,
+      "r2_score_max": 0.3437,
+      "rmse_mean": 132.6943,
+      "rmse_std": 223.0276,
+      "rmse_min": 42.8106
+    },
+    {
+      "validation_method": "Walk-Forward Analysis",
+      "r2_score_mean": 0.7611,
+      "r2_score_std": 0.5788,
+      "r2_score_max": 0.989,
+      "rmse_mean": 118.4731,
+      "rmse_std": 147.7552,
+      "rmse_min": 39.0832
+    }
+  ],
+  "performance_by_type": [
+    {
+      "model_type": "Ensemble",
+      "r2_score_mean": 0.1238,
+      "r2_score_std": 0.1886,
+      "r2_score_max": 0.2666,
+      "rmse_mean": 49.2629,
+      "rmse_std": 5.1344,
+      "rmse_min": 45.2529
+    },
+    {
+      "model_type": "Individual",
+      "r2_score_mean": -31.4698,
+      "r2_score_std": 85.9891,
+      "r2_score_max": 0.3437,
+      "rmse_mean": 169.7749,
+      "rmse_std": 263.7704,
+      "rmse_min": 42.8106
+    },
+    {
+      "model_type": "Traditional ML",
+      "r2_score_mean": 0.7611,
+      "r2_score_std": 0.5788,
+      "r2_score_max": 0.989,
+      "rmse_mean": 118.4731,
+      "rmse_std": 147.7552,
+      "rmse_min": 39.0832
+    }
+  ],
+  "detailed_results": [
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Individual",
+      "model_name": "ridge",
+      "r2_score": -0.8208384291977371,
+      "rmse": 71.30541447232002,
+      "mae": 59.08235217862085,
+      "cv_score": -0.48315051925260344,
+      "cv_std": 1.629261164224046
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Individual",
+      "model_name": "lasso",
+      "r2_score": 0.34365942600918276,
+      "rmse": 42.81061132866008,
+      "mae": 31.432067353126396,
+      "cv_score": -0.18014288339735407,
+      "cv_std": 1.8602721591594624
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Individual",
+      "model_name": "elastic_net",
+      "r2_score": -0.21827675167868077,
+      "rmse": 58.32567608038108,
+      "mae": 43.57431729396795,
+      "cv_score": -1.0185742913941973,
+      "cv_std": 1.561808188101429
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Individual",
+      "model_name": "random_forest",
+      "r2_score": -1.3531086806740813,
+      "rmse": 81.06022338937753,
+      "mae": 71.52176352511616,
+      "cv_score": -2.7375647251130615,
+      "cv_std": 1.9697317609877456
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Individual",
+      "model_name": "gradient_boosting",
+      "r2_score": -0.045371805320261194,
+      "rmse": 54.02841095450763,
+      "mae": 41.294627783855056,
+      "cv_score": -2.7871417342496105,
+      "cv_std": 1.846189876603951
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Individual",
+      "model_name": "xgboost",
+      "r2_score": -0.1077629332358141,
+      "rmse": 55.6173404802155,
+      "mae": 43.387275610077246,
+      "cv_score": -2.6802606372848077,
+      "cv_std": 2.181470866047573
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Individual",
+      "model_name": "lightgbm",
+      "r2_score": -20.325636108675464,
+      "rmse": 244.02695481203176,
+      "mae": 238.19156017809675,
+      "cv_score": -2.391352458200626,
+      "cv_std": 1.7886250355312372
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Individual",
+      "model_name": "svr",
+      "r2_score": -260.09614394239026,
+      "rmse": 853.8607140521841,
+      "mae": 852.1574039597853,
+      "cv_score": -22.186965987284182,
+      "cv_std": 12.92741005888215
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Individual",
+      "model_name": "linear_regression",
+      "r2_score": -0.6046581937359892,
+      "rmse": 66.93882307856416,
+      "mae": 50.16347172983826,
+      "cv_score": -5.065629106255761,
+      "cv_std": 9.901025936781936
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Ensemble",
+      "model_name": "stacking",
+      "r2_score": 0.15152544978676474,
+      "rmse": 48.67502838134382,
+      "mae": 37.161420736448044,
+      "cv_score": NaN,
+      "cv_std": NaN
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Ensemble",
+      "model_name": "blending_linear",
+      "r2_score": 0.266638157477432,
+      "rmse": 45.2528522902107,
+      "mae": 34.79984908767679,
+      "cv_score": NaN,
+      "cv_std": NaN
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Ensemble",
+      "model_name": "blending_ridge",
+      "r2_score": -0.14989913034108815,
+      "rmse": 56.66523263008386,
+      "mae": 45.70209217584799,
+      "cv_score": NaN,
+      "cv_std": NaN
+    },
+    {
+      "validation_method": "Optimized Training (Time Series CV)",
+      "model_type": "Ensemble",
+      "model_name": "dynamic_ensemble",
+      "r2_score": 0.2270438494690219,
+      "rmse": 46.45839818549167,
+      "mae": 35.7146221357683,
+      "cv_score": NaN,
+      "cv_std": NaN
+    },
+    {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "lasso",
+      "r2_score": 0.9889899434206976,
+      "rmse": 39.08317470306184,
+      "mae": 29.969009825434785,
+      "cv_score": -0.6049252969951768,
+      "cv_std": 1.1757713563596432
+    },
+    {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "elastic_net",
+      "r2_score": 0.9889810959279514,
+      "rmse": 39.098874834243965,
+      "mae": 29.996538635463104,
+      "cv_score": -0.6024169598517631,
+      "cv_std": 1.1536134699485598
+    },
+    {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "random_forest",
+      "r2_score": 0.9640158430995656,
+      "rmse": 70.6562728456851,
+      "mae": 50.55887961359388,
+      "cv_score": -3.4303146695763647,
+      "cv_std": 4.816034027213001
+    },
+    {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "xgboost",
+      "r2_score": 0.960604465049886,
+      "rmse": 73.92963459232907,
+      "mae": 55.53626526415872,
+      "cv_score": -5.047906547395746,
+      "cv_std": 7.096833344580036
+    },
+    {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "lightgbm",
+      "r2_score": 0.954644548322285,
+      "rmse": 79.32494994336534,
+      "mae": 58.64653829368658,
+      "cv_score": -7.435989939096374,
+      "cv_std": 20.6767167323464
+    },
+    {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "gradient_boosting",
+      "r2_score": 0.9525850511101868,
+      "rmse": 81.10594745528815,
+      "mae": 55.6404724259345,
+      "cv_score": -4.073103083198244,
+      "cv_std": 5.3322762969187485
+    },
+    {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "ridge",
+      "r2_score": 0.9502083671673568,
+      "rmse": 83.11381988624346,
+      "mae": 60.77409604726864,
+      "cv_score": -8.487805613130943,
+      "cv_std": 17.050795624030084
+    },
+    {
+      "validation_method": "Walk-Forward Analysis",
+      "model_type": "Traditional ML",
+      "model_name": "svr",
+      "r2_score": -0.6709070506768104,
+      "rmse": 481.4721868931906,
+      "mae": 433.8734526116832,
+      "cv_score": -251.10469673166585,
+      "cv_std": 231.4586544469106
+    }
+  ]
+}

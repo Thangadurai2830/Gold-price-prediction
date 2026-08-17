@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Price Live Chat - Real-time Updates</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --danger-color: #ef4444;
+            --success-color: #22c55e;
+            
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-card: #1e293b;
+            --bg-glass: rgba(30, 41, 59, 0.8);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            
+            --border-color: #334155;
+            --border-light: #475569;
+            
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+            
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(1deg); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--bg-glass);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            height: calc(100vh - 140px);
+        }
+        
+        .price-panel {
+            flex: 1;
+            background: var(--bg-glass);
+            border-radius: var(--radius-xl);
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            overflow-y: auto;
+        }
+        
+        .chat-panel {
+            flex: 1;
+            background: var(--bg-glass);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .price-summary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .price-summary h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .price-summary .avg-price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .price-summary .price-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .price-sources {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .source-card {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .source-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--primary-color);
+        }
+        
+        .source-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .source-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .source-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+        
+        .source-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-live {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .status-static {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .source-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        
+        .source-details {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .price-change {
+            font-weight: 600;
+        }
+        
+        .price-change.positive {
+            color: var(--success-color);
+        }
+        
+        .price-change.negative {
+            color: var(--danger-color);
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+        
+        .chat-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            padding: 12px 16px;
+            border-radius: var(--radius-lg);
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .message.system {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            align-self: center;
+            max-width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .message.user {
+            background: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+        }
+        
+        .message.price-update {
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            color: white;
+            align-self: center;
+            max-width: 100%;
+            text-align: center;
+        }
+        
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .chat-input input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .send-btn {
+            padding: 12px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .send-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: var(--radius-lg);
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 1000;
+        }
+        
+        .connection-status.connected {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .connection-status.disconnected {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .main-content {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .price-panel, .chat-panel {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-coins"></i> Gold Price Live Chat</h1>
+            <p>Real-time gold prices from multiple sources with live chat integration</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="price-panel">
+                <div class="price-summary" id="priceSummary">
+                    <h2>Average Gold Price</h2>
+                    <div class="avg-price" id="avgPrice">$0.00</div>
+                    <div class="price-info">
+                        <span>High: $<span id="highPrice">0.00</span></span>
+                        <span>Low: $<span id="lowPrice">0.00</span></span>
+                        <span>Spread: $<span id="priceSpread">0.00</span></span>
+                    </div>
+                </div>
+                
+                <div class="price-sources" id="priceSources">
+                    <!-- Price sources will be populated here -->
+                </div>
+            </div>
+            
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <h3><i class="fas fa-comments"></i> Live Chat</h3>
+                    <div class="chat-status">
+                        <div class="status-indicator"></div>
+                        <span>Connected to live updates</span>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message system">
+                        <i class="fas fa-info-circle"></i> Welcome to Gold Price Live Chat! Real-time updates every 30 seconds.
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <div class="input-group">
+                        <input type="text" id="messageInput" placeholder="Type your message about gold prices..." maxlength="500">
+                        <button class="send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="connection-status connected" id="connectionStatus">
+        <i class="fas fa-wifi"></i> Connected
+    </div>
+    
+    <script>
+        class GoldPriceLiveChat {
+            constructor() {
+                this.socket = io();
+                this.currentRoom = 'general';
+                this.lastPriceUpdate = null;
+                this.priceHistory = [];
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.connectToSocket();
+                this.loadInitialData();
+            }
+            
+            initializeElements() {
+                this.elements = {
+                    avgPrice: document.getElementById('avgPrice'),
+                    highPrice: document.getElementById('highPrice'),
+                    lowPrice: document.getElementById('lowPrice'),
+                    priceSpread: document.getElementById('priceSpread'),
+                    priceSources: document.getElementById('priceSources'),
+                    chatMessages: document.getElementById('chatMessages'),
+                    messageInput: document.getElementById('messageInput'),
+                    sendBtn: document.getElementById('sendBtn'),
+                    connectionStatus: document.getElementById('connectionStatus')
+                };
+            }
+            
+            setupEventListeners() {
+                this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
+                this.elements.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage();
+                });
+            }
+            
+            connectToSocket() {
+                this.socket.on('connect', () => {
+                    console.log('Connected to server');
+                    this.updateConnectionStatus(true);
+                    this.socket.emit('join_price_room', { room: this.currentRoom });
+                });
+                
+                this.socket.on('disconnect', () => {
+                    console.log('Disconnected from server');
+                    this.updateConnectionStatus(false);
+                });
+                
+                this.socket.on('price_update', (data) => {
+                    this.updatePrices(data);
+                    this.addPriceUpdateMessage(data);
+                });
+                
+                this.socket.on('chat_message', (data) => {
+                    this.addChatMessage(data);
+                });
+            }
+            
+            async loadInitialData() {
+                try {
+                    const response = await fetch('/api/current-prices');
+                    const data = await response.json();
+                    this.updatePrices(data);
+                } catch (error) {
+                    console.error('Error loading initial data:', error);
+                }
+            }
+            
+            updatePrices(data) {
+                if (!data || !data.summary) return;
+                
+                const summary = data.summary;
+                this.elements.avgPrice.textContent = `$${summary.average_price || '0.00'}`;
+                this.elements.highPrice.textContent = summary.highest_price || '0.00';
+                this.elements.lowPrice.textContent = summary.lowest_price || '0.00';
+                this.elements.priceSpread.textContent = summary.price_spread || '0.00';
+                
+                this.updateSourceCards(data);
+                this.lastPriceUpdate = data;
+            }
+            
+            updateSourceCards(data) {
+                const sourcesContainer = this.elements.priceSources;
+                sourcesContainer.innerHTML = '';
+                
+                const sourceOrder = ['yahoo', 'kitco', 'apmex', 'business_insider', 'veracash', 'metals_api', 'alpha_vantage', 'finnhub'];
+                
+                sourceOrder.forEach(sourceKey => {
+                    if (data[sourceKey] && data[sourceKey].price > 0) {
+                        const sourceCard = this.createSourceCard(sourceKey, data[sourceKey]);
+                        sourcesContainer.appendChild(sourceCard);
+                    }
+                });
+            }
+            
+            createSourceCard(sourceKey, sourceData) {
+                const card = document.createElement('div');
+                card.className = 'source-card';
+                
+                const isLive = ['yahoo', 'metals_api', 'alpha_vantage', 'finnhub'].includes(sourceKey);
+                const sourceName = this.getSourceDisplayName(sourceKey);
+                
+                const change = sourceData.change || 0;
+                const changePercent = sourceData.change_percent || 0;
+                const changeClass = change >= 0 ? 'positive' : 'negative';
+                const changeIcon = change >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                
+                card.innerHTML = `
+                    <div class="source-header">
+                        <div class="source-name">${sourceName}</div>
+                        <div class="source-status ${isLive ? 'status-live' : 'status-static'}">
+                            ${isLive ? 'LIVE' : 'STATIC'}
+                        </div>
+                    </div>
+                    <div class="source-price">$${sourceData.price.toFixed(2)}</div>
+                    <div class="source-details">
+                        <span>Updated: ${new Date(sourceData.timestamp).toLocaleTimeString()}</span>
+                        ${change !== 0 ? `
+                            <span class="price-change ${changeClass}">
+                                <i class="fas ${changeIcon}"></i> $${Math.abs(change).toFixed(2)} (${Math.abs(changePercent).toFixed(2)}%)
+                            </span>
+                        ` : ''}
+                    </div>
+                `;
+                
+                return card;
+            }
+            
+            getSourceDisplayName(sourceKey) {
+                const names = {
+                    'yahoo': 'Yahoo Finance',
+                    'kitco': 'Kitco',
+                    'apmex': 'APMEX',
+                    'business_insider': 'Business Insider',
+                    'veracash': 'VeraCash',
+                    'metals_api': 'Metals-API',
+                    'alpha_vantage': 'Alpha Vantage',
+                    'finnhub': 'Finnhub'
+                };
+                return names[sourceKey] || sourceKey;
+            }
+            
+            addPriceUpdateMessage(data) {
+                if (!data.summary) return;
+                
+                const message = document.createElement('div');
+                message.className = 'message price-update';
+                
+                const summary = data.summary;
+                const timestamp = new Date().toLocaleTimeString();
+                
+                message.innerHTML = `
+                    <i class="fas fa-chart-line"></i> 
+                    <strong>Price Update:</strong> Average $${summary.average_price} 
+                    (${summary.total_sources} sources) - ${timestamp}
+                `;
+                
+                this.elements.chatMessages.appendChild(message);
+                this.scrollToBottom();
+            }
+            
+            sendMessage() {
+                const input = this.elements.messageInput;
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                const messageData = {
+                    message: message,
+                    room: this.currentRoom,
+                    timestamp: new Date().toISOString(),
+                    user: 'You'
+                };
+                
+                this.socket.emit('chat_message', messageData);
+                input.value = '';
+            }
+            
+            addChatMessage(data) {
+                const message = document.createElement('div');
+                message.className = `message ${data.user === 'You' ? 'user' : 'other'}`;
+                
+                const timestamp = new Date(data.timestamp).toLocaleTimeString();
+                
+                let content = `<strong>${data.user}:</strong> ${data.message}`;
+                
+                if (data.price_context) {
+                    content += `<br><small><i class="fas fa-info-circle"></i> Current avg price: $${data.price_context.current_avg}</small>`;
+                }
+                
+                message.innerHTML = content;
+                this.elements.chatMessages.appendChild(message);
+                this.scrollToBottom();
+            }
+            
+            updateConnectionStatus(connected) {
+                const status = this.elements.connectionStatus;
+                if (connected) {
+                    status.className = 'connection-status connected';
+                    status.innerHTML = '<i class="fas fa-wifi"></i> Connected';
+                } else {
+                    status.className = 'connection-status disconnected';
+                    status.innerHTML = '<i class="fas fa-wifi"></i> Disconnected';
+                }
+            }
+            
+            scrollToBottom() {
+                this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
+            }
+        }
+        
+        // Initialize the live chat when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new GoldPriceLiveChat();
+        });
+    </script>
+</body>
+</html>
